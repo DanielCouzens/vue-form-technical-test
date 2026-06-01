@@ -130,7 +130,7 @@ out when removed, avoiding an abrupt visual snap that would feel jarring to the 
 
 ---
 
-### Validation
+## Validation
 
 Validation was implemented from scratch rather than using a library such as **Zod** combined with **Vee-Validate** (or similar solutions like Vuelidate).
 
@@ -145,97 +145,42 @@ This decision involved a deliberate tension between two competing priorities:
 
 The implementation was deliberately structured in a clear, extensible way so that migrating to Zod later would be straightforward. For this technical test, showing the actual validation logic took precedence over using a production-grade library.
 
-### Implementation Details
+### useFormValidation composable
+
+Validation logic lives in a standalone `useFormValidation` composable rather than inline
+in `ServiceForm.vue`. The composable accepts the reactive form object and returns
+`errors`, `validateField`, and `validateAll`. This separation means:
+
+- The validation rules are independently testable in isolation from the component
+- `ServiceForm.vue` is concerned only with rendering and user interaction
+- The composable could be reused across multiple forms with different field sets
+
+### ValidatorMap pattern
 
 Validation rules are defined using a `ValidatorMap` — a typed object where each key maps
 to a validator function for that field. This is more scalable than a switch statement:
-adding a new field requires only one new entry in the map.
+adding a new field requires only one new entry in the map rather than a new case block.
 
 Each validator is a pure function that receives the field value (and optionally the full
 form state for conditional rules) and returns either an empty string (valid) or an error
-message.
+message string (invalid).
 
-### Email validation
+### validateAll and the every() short-circuit
 
-Email validation uses a regex (`/^[^\s@]+@[^\s@]+\.[^\s@]+$/`) rather than the browser’s
-native `checkValidity()` method. The DOM approach (`document.createElement(‘input’)`) was
-trialled but reverted for two reasons:
+An initial implementation of `validateAll` used `Array.every()`. During the TDD process
+the test asserting that all error messages appear simultaneously on a failed submit
+failed immediately — revealing that `every()` short-circuits on the first `false`,
+meaning subsequent fields were never validated.
 
-1. It does not flag empty strings as invalid in the absence of a `required` attribute,
-   requiring an additional guard that the regex handles implicitly.
-2. It couples the validator to the DOM, which would break in an SSR or Node.js context.
-
-No client-side email validation is a guarantee of deliverability — the only true
-validation is sending a verification email. The regex is a UX aid that catches obvious
-formatting errors before submission.
-
-### Defence in depth on DateInput
-
-The `DateInput` component sets a `max` attribute equal to today’s date. This prevents
-the browser’s native date picker from allowing future dates to be selected. This does
-not replace the validator — the composable still validates that the date is in the
-past — but it improves UX by preventing the error before it occurs.
-
-The `today` value is a plain `const` rather than a `computed` ref. Since a date of birth
-field does not need to react to the date changing during a session, the extra reactivity
-overhead of `computed` would be unnecessary.
-
----
-
-## Testing
-
-### TDD methodology
-
-All components and composables were built using Test-Driven Development — tests written
-first, implementation second. This approach was chosen because:
-
-- It forces the API of each component to be designed before implementation, leading to
-  cleaner interfaces
-- It ensures every feature has test coverage by definition
-- The failing tests act as a specification, making the intent of each piece of code clear
-
-### Colocated tests
-
-Test files live alongside the files they test (`TextInput.spec.ts` next to
-`TextInput.vue`) rather than in a centralised `__tests__` directory. This is the
-modern Vue convention and makes it immediately visible which files have test coverage.
-
-### What the tests verify
-
-Component tests verify behaviour, not implementation:
-
-- The component renders the correct elements
-- The `v-model` contract works (modelValue prop + update:modelValue emit)
-- Error messages appear and are accessible when the error prop is set
-- The label is correctly associated with the input
-
-Tests avoid asserting specific generated ID values (e.g. `v-0`) and instead assert
-the relationship — that the label's `for` matches the input's `id`. This makes tests
-resilient to Vue's internal ID generation.
-
-### Consistent accessibility assertions
-
-All field component tests assert both the error-present and error-absent states for
-`aria-invalid` and `aria-describedby`. This consistency was established after the
-`SelectInput` assessment identified that earlier components only tested the error-present
-path — a gap that was retroactively corrected across all components.
-
-### Testing form submission in Vue Test Utils
-
-A key finding during development: triggering a submit button's click event via
-`wrapper.find('[data-testid="submit-button"]').trigger('click')` does not reliably
-fire the form's `@submit.prevent` handler in jsdom. The reliable approach is to trigger
-the submit event directly on the form element:
+The implementation was updated to separate the validation pass from the result check:
 
 ```typescript
-await wrapper.find('form').trigger('submit')
+// Correct: map runs all validators first, then check results
+const results = (Object.keys(form) as Array<keyof ServiceFormData>).map((field) =>
+  validateField(field),
+)
+return results.every(Boolean)
 ```
 
-Similarly, setValue on native inputs inside child components does not always propagate
-back up through the v-model chain to the parent's reactive state. Emitting directly
-on the component instance is more reliable for setting parent form state in integration
-tests:
-
-```typescript
-await wrapper.findComponent({ name: 'TextInput' }).vm.$emit('update:modelValue', 'Dan')
-```
+This is a good example of TDD surfacing a subtle behavioural issue at the test-writing
+stage rather than during manual testing or in production.
