@@ -45,8 +45,10 @@ describe('TextInput', () => {
   })
 
   it('does not set aria-describedby when no error', () => {
-    const wrapper = mount(TextInput, { props: { label: 'Name', modelValue: '' } })
-    expect(wrapper.find('input').attributes('aria-describedby')).toBeUndefined()
+    const wrapper = mount(TextInput, {
+      props: { label: 'Name', modelValue: '' },
+    })
     expect(wrapper.find('input').attributes('aria-invalid')).toBe('false')
+    expect(wrapper.find('input').attributes('aria-describedby')).toBeUndefined()
   })
 })

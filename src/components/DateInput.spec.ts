@@ -40,4 +40,12 @@ describe('DateInput', () => {
     const today = new Date().toISOString().split('T')[0]
     expect(wrapper.find('input').attributes('max')).toBe(today)
   })
+
+  it('does not set aria-describedby when no error', () => {
+    const wrapper = mount(DateInput, {
+      props: { label: 'Date of Birth', modelValue: '' },
+    })
+    expect(wrapper.find('input').attributes('aria-invalid')).toBe('false')
+    expect(wrapper.find('input').attributes('aria-describedby')).toBeUndefined()
+  })
 })

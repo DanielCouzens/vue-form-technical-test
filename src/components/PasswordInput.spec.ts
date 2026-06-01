@@ -49,4 +49,12 @@ describe('PasswordInput', () => {
     expect(id).toBeTruthy()
     expect(wrapper.find('label').attributes('for')).toBe(id)
   })
+
+  it('does not set aria-describedby when no error', () => {
+    const wrapper = mount(PasswordInput, {
+      props: { label: 'Password', modelValue: '' },
+    })
+    expect(wrapper.find('input').attributes('aria-invalid')).toBe('false')
+    expect(wrapper.find('input').attributes('aria-describedby')).toBeUndefined()
+  })
 })
