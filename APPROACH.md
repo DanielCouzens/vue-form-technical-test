@@ -75,6 +75,31 @@ Every field component implements the following accessibility pattern:
 - `:aria-describedby` — links the input to its error message when one is present
 - `role="alert"` on the error span — causes screen readers to announce the error immediately
 
+`aria-invalid` is always rendered explicitly — as either `"true"` or `"false"` — rather
+than being omitted when there is no error. This is more reliable for screen readers, which
+handle the explicit `false` value more consistently than a missing attribute.
+
+### Attribute passthrough on SelectInput
+
+`SelectInput` uses `v-bind="$attrs"` on the `<select>` element combined with
+`defineOptions({ inheritAttrs: false })`. This prevents Vue from attaching inherited
+attributes to the root `<div>` and instead forwards them directly to the `<select>`.
+
+This allows callers to pass native attributes such as `name`, `required`, `disabled`, or
+`autocomplete` without the component needing to explicitly define them as props — making
+the component more flexible without increasing its API surface.
+
+### Placeholder as a prop on SelectInput
+
+The SelectInput `placeholder` prop is optional. When provided, a disabled option with an
+empty value is rendered as the first option, making the unselected state explicit to the
+user. When omitted, no placeholder is rendered and the first real option is shown by
+default.
+
+This matters because a `<select>` with no placeholder and `modelValue: ''` will visually
+display the first option even though it has not been chosen — which can silently submit
+the wrong value. The placeholder makes the required selection explicit.
+
 ---
 
 ## Validation
@@ -142,6 +167,13 @@ Tests avoid asserting specific generated ID values (e.g. `v-0`) and instead asse
 the relationship — that the label's `for` matches the input's `id`. This makes tests
 resilient to Vue's internal ID generation.
 
+### Consistent accessibility assertions
+
+All field component tests assert both the error-present and error-absent states for
+`aria-invalid` and `aria-describedby`. This consistency was established after the
+`SelectInput` assessment identified that earlier components only tested the error-present
+path — a gap that was retroactively corrected across all components.
+
 ---
 
 ## What would be added with more time
@@ -149,5 +181,7 @@ resilient to Vue's internal ID generation.
 - **E2E tests** using Playwright covering the full form submission flow
 - **Storybook** for isolated component development and visual documentation
 - **lucide-vue-next** icons for the password show/hide toggle
+- **`v-bind="$attrs"` on remaining field components** for consistency with SelectInput
+- **`disabled` prop** on SelectInput for conditionally locking fields
 - **Cross-browser date picker** fallback for older Safari versions
 - **Form state management** via Pinia for more complex form scenarios
