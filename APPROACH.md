@@ -102,33 +102,75 @@ the wrong value. The placeholder makes the required selection explicit.
 
 ---
 
-## Validation
+## Progressive Disclosure
 
-### Why written from scratch
+Progressive disclosure is the pattern of showing form fields only when they become
+relevant, rather than presenting everything at once. In this form, the "Please specify"
+text field is hidden until the user selects "Other" from the service dropdown.
 
-A library such as vee-validate combined with a schema library like zod would be the
-appropriate choice for a production application at scale — particularly for async
-validation, complex cross-field rules, or a large number of fields.
+### Why v-if and not v-show
 
-For this submission, validation was written from scratch in a `useFormValidation`
-composable for two reasons:
+Vue offers two ways to conditionally render elements:
 
-1. The validation requirements are straightforward enough that a library would add
-   dependency overhead without meaningful benefit at this scale
-2. Writing it from scratch keeps the logic transparent and demonstrates understanding
-   of the underlying patterns — the composable is structured so that swapping in a
-   schema library later would require minimal changes
+- `v-show` toggles `display: none` — the element remains in the DOM
+- `v-if` removes the element from the DOM entirely
 
-The composable follows a rules-object pattern: one entry per field, each with a
-`validate` function and an error message. This structure mirrors how schema libraries
-work, making a future migration straightforward.
+For a conditionally required field, `v-if` is the correct choice for two reasons:
+
+1. A `v-show` field that is hidden is still present in the DOM and could be submitted
+   with an empty value, requiring extra logic to skip its validation. A `v-if` field
+   that is absent simply does not exist — no validation needed, no accidental submission.
+2. It is semantically clearer — the field does not exist until it is needed.
+
+### Transition
+
+The conditionally rendered field is wrapped in Vue's `<Transition>` component with
+Tailwind CSS opacity classes. This animates the field fading in when inserted and fading
+out when removed, avoiding an abrupt visual snap that would feel jarring to the user.
+
+---
+
+### Validation
+
+Validation was implemented from scratch rather than using a library such as **Zod** combined with **Vee-Validate** (or similar solutions like Vuelidate).
+
+This decision involved a deliberate tension between two competing priorities:
+
+- **Scalability and maintainability**: In a larger application with many forms or complex rules, I would use Zod for schema definition because it offers declarative, type-safe validation, excellent developer experience, and powerful features like conditional validation (`.refine()` / `.superRefine()`), transformation, and async validation.
+- **Demonstrating core competencies**: The brief made it clear that reviewers wanted to see how I handle form validation logic. Using a library would have hidden much of this logic behind abstractions. By writing it manually, I could clearly demonstrate:
+  - Reactive error state management
+  - Conditional field validation (`otherService` only when `service === 'other'`)
+  - Field-level validation on blur + full form validation on submit
+  - Clean TypeScript integration
+
+The implementation was deliberately structured in a clear, extensible way so that migrating to Zod later would be straightforward. For this technical test, showing the actual validation logic took precedence over using a production-grade library.
+
+### Implementation Details
+
+Validation rules are defined using a `ValidatorMap` — a typed object where each key maps
+to a validator function for that field. This is more scalable than a switch statement:
+adding a new field requires only one new entry in the map.
+
+Each validator is a pure function that receives the field value (and optionally the full
+form state for conditional rules) and returns either an empty string (valid) or an error
+message.
+
+### Email validation
+
+Email validation uses the browser’s native `checkValidity()` method on a dynamically
+created `<input type="email">` element. This is more reliable than a hand-rolled regex
+as it matches the browser’s own email parsing logic.
+
+No client-side email validation is a guarantee of deliverability — the only true
+validation is sending a verification email. The browser’s `checkValidity()` is a UX
+aid that catches obvious formatting errors before submission.
 
 ### Defence in depth on DateInput
 
-The `DateInput` component sets a `max` attribute equal to today's date. This prevents
-the browser's native date picker from allowing future dates to be selected. This does
-not replace validation in `useFormValidation` — the composable still validates that
-the date is in the past — but it improves UX by preventing the error before it occurs.
+The `DateInput` component sets a `max` attribute equal to today’s date. This prevents
+the browser’s native date picker from allowing future dates to be selected. This does
+not replace the validator — the composable still validates that the date is in the
+past — but it improves UX by preventing the error before it occurs.
 
 The `today` value is a plain `const` rather than a `computed` ref. Since a date of birth
 field does not need to react to the date changing during a session, the extra reactivity
@@ -174,14 +216,22 @@ All field component tests assert both the error-present and error-absent states 
 `SelectInput` assessment identified that earlier components only tested the error-present
 path — a gap that was retroactively corrected across all components.
 
----
+### Testing form submission in Vue Test Utils
 
-## What would be added with more time
+A key finding during development: triggering a submit button's click event via
+`wrapper.find('[data-testid="submit-button"]').trigger('click')` does not reliably
+fire the form's `@submit.prevent` handler in jsdom. The reliable approach is to trigger
+the submit event directly on the form element:
 
-- **E2E tests** using Playwright covering the full form submission flow
-- **Storybook** for isolated component development and visual documentation
-- **lucide-vue-next** icons for the password show/hide toggle
-- **`v-bind="$attrs"` on remaining field components** for consistency with SelectInput
-- **`disabled` prop** on SelectInput for conditionally locking fields
-- **Cross-browser date picker** fallback for older Safari versions
-- **Form state management** via Pinia for more complex form scenarios
+```typescript
+await wrapper.find('form').trigger('submit')
+```
+
+Similarly, setValue on native inputs inside child components does not always propagate
+back up through the v-model chain to the parent's reactive state. Emitting directly
+on the component instance is more reliable for setting parent form state in integration
+tests:
+
+```typescript
+await wrapper.findComponent({ name: 'TextInput' }).vm.$emit('update:modelValue', 'Dan')
+```
