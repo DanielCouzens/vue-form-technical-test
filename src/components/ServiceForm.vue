@@ -72,7 +72,7 @@ import SelectInput from '@/components/SelectInput.vue'
 import CheckboxInput from '@/components/CheckboxInput.vue'
 import type { SelectOption } from '@/components/SelectInput.vue'
 
-type FormData = {
+type ServiceFormData = {
   name: string
   email: string
   password: string
@@ -83,19 +83,14 @@ type FormData = {
 }
 
 type ValidatorMap = {
-  [K in keyof FormData]: (value: FormData[K], formData?: FormData) => string
+  [K in keyof ServiceFormData]: (value: ServiceFormData[K], formData?: ServiceFormData) => string
 }
 
 const validators: ValidatorMap = {
   name: (value: string) => (value.trim().length >= 2 ? '' : 'Name must be at least 2 characters'),
 
-  email: (value: string) => {
-    if (!value) return 'Please enter a valid email address'
-    const input = document.createElement('input')
-    input.type = 'email'
-    input.value = value
-    return input.checkValidity() ? '' : 'Please enter a valid email address'
-  },
+  email: (value: string) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? '' : 'Please enter a valid email address',
 
   password: (value: string) =>
     value.length >= 8 && /\d/.test(value)
@@ -109,7 +104,7 @@ const validators: ValidatorMap = {
 
   service: (value: string) => (value ? '' : 'Please select a service'),
 
-  otherService: (value: string, formData?: FormData) => {
+  otherService: (value: string, formData?: ServiceFormData) => {
     if (formData?.service === 'other') {
       return value.trim().length >= 2 ? '' : 'Please specify the service'
     }
@@ -126,7 +121,7 @@ const serviceOptions: SelectOption[] = [
   { value: 'other', label: 'Other' },
 ]
 
-const form = reactive<FormData>({
+const form = reactive<ServiceFormData>({
   name: '',
   email: '',
   password: '',
@@ -136,7 +131,7 @@ const form = reactive<FormData>({
   terms: false,
 })
 
-const errors = reactive<Record<keyof FormData, string>>({
+const errors = reactive<Record<keyof ServiceFormData, string>>({
   name: '',
   email: '',
   password: '',
@@ -148,9 +143,12 @@ const errors = reactive<Record<keyof FormData, string>>({
 
 const submitted = ref(false)
 
-function validateField(field: keyof FormData): boolean {
+function validateField(field: keyof ServiceFormData): boolean {
   const value = form[field]
-  const validator = validators[field] as (value: string | boolean, formData?: FormData) => string
+  const validator = validators[field] as (
+    value: string | boolean,
+    formData?: ServiceFormData,
+  ) => string
 
   const errorMessage = field === 'otherService' ? validator(value, form) : validator(value)
 
@@ -161,7 +159,7 @@ function validateField(field: keyof FormData): boolean {
 function handleSubmit() {
   let isValid = true
 
-  ;(Object.keys(form) as Array<keyof FormData>).forEach((field) => {
+  ;(Object.keys(form) as Array<keyof ServiceFormData>).forEach((field) => {
     if (!validateField(field)) {
       isValid = false
     }

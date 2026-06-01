@@ -157,13 +157,17 @@ message.
 
 ### Email validation
 
-Email validation uses the browser’s native `checkValidity()` method on a dynamically
-created `<input type="email">` element. This is more reliable than a hand-rolled regex
-as it matches the browser’s own email parsing logic.
+Email validation uses a regex (`/^[^\s@]+@[^\s@]+\.[^\s@]+$/`) rather than the browser’s
+native `checkValidity()` method. The DOM approach (`document.createElement(‘input’)`) was
+trialled but reverted for two reasons:
+
+1. It does not flag empty strings as invalid in the absence of a `required` attribute,
+   requiring an additional guard that the regex handles implicitly.
+2. It couples the validator to the DOM, which would break in an SSR or Node.js context.
 
 No client-side email validation is a guarantee of deliverability — the only true
-validation is sending a verification email. The browser’s `checkValidity()` is a UX
-aid that catches obvious formatting errors before submission.
+validation is sending a verification email. The regex is a UX aid that catches obvious
+formatting errors before submission.
 
 ### Defence in depth on DateInput
 

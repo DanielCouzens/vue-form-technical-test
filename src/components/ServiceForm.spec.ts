@@ -70,6 +70,15 @@ describe('ServiceForm', () => {
     expect(errorTexts).toContain('You must accept the terms and conditions')
   })
 
+  it('shows an error when Other is selected but the specify field is empty', async () => {
+    const wrapper = mount(ServiceForm)
+    await wrapper.find('select').setValue('other')
+    await wrapper.find('form').trigger('submit')
+    await wrapper.vm.$nextTick()
+    const errorTexts = wrapper.findAll('[data-testid="error"]').map((e) => e.text())
+    expect(errorTexts).toContain('Please specify the service')
+  })
+
   it('sets aria-invalid on inputs with errors after failed submit', async () => {
     const wrapper = mount(ServiceForm)
     await wrapper.find('form').trigger('submit')
