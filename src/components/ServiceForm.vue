@@ -71,48 +71,8 @@ import DateInput from '@/components/DateInput.vue'
 import SelectInput from '@/components/SelectInput.vue'
 import CheckboxInput from '@/components/CheckboxInput.vue'
 import type { SelectOption } from '@/components/SelectInput.vue'
-
-type ServiceFormData = {
-  name: string
-  email: string
-  password: string
-  dateOfBirth: string
-  service: string
-  otherService: string
-  terms: boolean
-}
-
-type ValidatorMap = {
-  [K in keyof ServiceFormData]: (value: ServiceFormData[K], formData?: ServiceFormData) => string
-}
-
-const validators: ValidatorMap = {
-  name: (value: string) => (value.trim().length >= 2 ? '' : 'Name must be at least 2 characters'),
-
-  email: (value: string) =>
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? '' : 'Please enter a valid email address',
-
-  password: (value: string) =>
-    value.length >= 8 && /\d/.test(value)
-      ? ''
-      : 'Password must be at least 8 characters and contain at least one number',
-
-  dateOfBirth: (value: string) => {
-    if (!value) return '' // Optional
-    return new Date(value) < new Date() ? '' : 'Date of birth must be in the past'
-  },
-
-  service: (value: string) => (value ? '' : 'Please select a service'),
-
-  otherService: (value: string, formData?: ServiceFormData) => {
-    if (formData?.service === 'other') {
-      return value.trim().length >= 2 ? '' : 'Please specify the service'
-    }
-    return ''
-  },
-
-  terms: (value: boolean) => (value ? '' : 'You must accept the terms and conditions'),
-}
+import { useFormValidation } from '@/composables/useFormValidation'
+import type { ServiceFormData } from '@/composables/useFormValidation'
 
 const serviceOptions: SelectOption[] = [
   { value: 'web-development', label: 'Web Development' },
@@ -131,42 +91,11 @@ const form = reactive<ServiceFormData>({
   terms: false,
 })
 
-const errors = reactive<Record<keyof ServiceFormData, string>>({
-  name: '',
-  email: '',
-  password: '',
-  dateOfBirth: '',
-  service: '',
-  otherService: '',
-  terms: '',
-})
+const { errors, validateField, validateAll } = useFormValidation(form)
 
 const submitted = ref(false)
 
-function validateField(field: keyof ServiceFormData): boolean {
-  const value = form[field]
-  const validator = validators[field] as (
-    value: string | boolean,
-    formData?: ServiceFormData,
-  ) => string
-
-  const errorMessage = field === 'otherService' ? validator(value, form) : validator(value)
-
-  errors[field] = errorMessage
-  return !errorMessage
-}
-
 function handleSubmit() {
-  let isValid = true
-
-  ;(Object.keys(form) as Array<keyof ServiceFormData>).forEach((field) => {
-    if (!validateField(field)) {
-      isValid = false
-    }
-  })
-
-  if (isValid) {
-    submitted.value = true
-  }
+  if (validateAll()) submitted.value = true
 }
 </script>
