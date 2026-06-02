@@ -1,0 +1,37 @@
+{
+  "form": {
+    "fields": {
+      "name": "Nom",
+      "email": "E-mail",
+      "password": "Mot de passe",
+      "dateOfBirth": "Date de naissance",
+      "service": "Service",
+      "otherService": "Veuillez préciser",
+      "terms": "J'accepte les conditions générales"
+    },
+    "placeholders": {
+      "name": "Entrez votre nom",
+      "email": "Entrez votre adresse e-mail",
+      "password": "Entrez votre mot de passe",
+      "otherService": "Décrivez le service dont vous avez besoin"
+    },
+    "options": {
+      "selectService": "Sélectionnez un service...",
+      "webDevelopment": "Développement Web",
+      "mobileDevelopment": "Développement Mobile",
+      "seoServices": "Services SEO",
+      "other": "Autre"
+    },
+    "validation": {
+      "nameMinLength": "Le nom doit comporter au moins 2 caractères",
+      "emailInvalid": "Veuillez entrer une adresse e-mail valide",
+      "passwordRequirements": "Le mot de passe doit comporter au moins 8 caractères et contenir au moins un chiffre",
+      "dateOfBirthFuture": "La date de naissance doit être dans le passé",
+      "serviceRequired": "Veuillez sélectionner un service",
+      "otherServiceRequired": "Veuillez préciser le service",
+      "termsRequired": "Vous devez accepter les conditions générales"
+    },
+    "submit": "Soumettre",
+    "success": "Merci ! Votre demande a été soumise."
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "form": {
+    "fields": {
+      "name": "Name",
+      "email": "Email",
+      "password": "Password",
+      "dateOfBirth": "Date of Birth",
+      "service": "Service",
+      "otherService": "Please specify",
+      "terms": "I agree to the terms and conditions"
+    },
+    "placeholders": {
+      "name": "Enter your name",
+      "email": "Enter your email address",
+      "password": "Enter your password",
+      "otherService": "Describe the service you need"
+    },
+    "options": {
+      "selectService": "Select a service...",
+      "webDevelopment": "Web Development",
+      "mobileDevelopment": "Mobile Development",
+      "seoServices": "SEO Services",
+      "other": "Other"
+    },
+    "validation": {
+      "nameMinLength": "Name must be at least 2 characters",
+      "emailInvalid": "Please enter a valid email address",
+      "passwordRequirements": "Password must be at least 8 characters and contain at least one number",
+      "dateOfBirthFuture": "Date of birth must be in the past",
+      "serviceRequired": "Please select a service",
+      "otherServiceRequired": "Please specify the service",
+      "termsRequired": "You must accept the terms and conditions"
+    },
+    "submit": "Submit",
+    "success": "Thank you! Your enquiry has been submitted."
+  }
+}
