@@ -9,7 +9,8 @@
         @blur="validateField('name')"
         @input="errors.name && $nextTick(() => validateField('name'))"
       />
-      <EmailInput
+      <TextInput
+        type="email"
         v-model="form.email"
         :label="t('form.fields.email')"
         :placeholder="t('form.placeholders.email')"
@@ -101,7 +102,6 @@
 import { computed, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import TextInput from '@/components/TextInput.vue'
-import EmailInput from '@/components/EmailInput.vue'
 import PasswordInput from '@/components/PasswordInput.vue'
 import DateInput from '@/components/DateInput.vue'
 import SelectInput from '@/components/SelectInput.vue'

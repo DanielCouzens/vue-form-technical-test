@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import TextInput from '@/components/TextInput.vue'
 
 describe('TextInput', () => {
@@ -57,5 +57,25 @@ describe('TextInput', () => {
     })
     expect(wrapper.find('input').attributes('aria-invalid')).toBe('false')
     expect(wrapper.find('input').attributes('aria-describedby')).toBeUndefined()
+  })
+
+  it('defaults to type="text"', () => {
+    const wrapper = mount(TextInput, { props: { label: 'Name', modelValue: '' } })
+    expect(wrapper.find('input').attributes('type')).toBe('text')
+  })
+
+  it('renders type="email" when type prop is set', () => {
+    const wrapper = mount(TextInput, { props: { label: 'Email', modelValue: '', type: 'email' } })
+    expect(wrapper.find('input').attributes('type')).toBe('email')
+  })
+
+  it('forwards blur event to the input via $attrs', async () => {
+    const onBlur = vi.fn<() => void>()
+    const wrapper = mount(TextInput, {
+      props: { label: 'Email', modelValue: '', type: 'email' },
+      attrs: { onBlur },
+    })
+    await wrapper.find('input').trigger('blur')
+    expect(onBlur).toHaveBeenCalledOnce()
   })
 })
