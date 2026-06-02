@@ -1,8 +1,11 @@
-<script setup lang="ts"></script>
-
 <template>
-  <h1>Vue Form Technical Test</h1>
-  <p>You did it!</p>
+  <div>
+    <LanguageSwitcher />
+    <ServiceForm />
+  </div>
 </template>
 
-<style scoped></style>
+<script setup lang="ts">
+import LanguageSwitcher from '@/components/LanguageSwitcher.vue'
+import ServiceForm from '@/components/ServiceForm.vue'
+</script>
