@@ -7,7 +7,9 @@
       "dateOfBirth": "Date de naissance",
       "service": "Service",
       "otherService": "Veuillez préciser",
-      "terms": "J'accepte les conditions générales"
+      "terms": "J'accepte les conditions générales",
+      "showPassword": "Afficher",
+      "hidePassword": "Masquer"
     },
     "placeholders": {
       "name": "Entrez votre nom",

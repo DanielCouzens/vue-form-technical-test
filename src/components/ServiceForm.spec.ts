@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, it, expect } from 'vitest'
 import ServiceForm from '@/components/ServiceForm.vue'
+import { createTestI18n } from '@/test-utils'
 
 const fillValidForm = async (wrapper: ReturnType<typeof mount>) => {
   await wrapper.findComponent({ name: 'TextInput' }).vm.$emit('update:modelValue', 'Dan')
@@ -18,7 +19,7 @@ const fillValidForm = async (wrapper: ReturnType<typeof mount>) => {
 
 describe('ServiceForm', () => {
   it('renders all standard form fields', () => {
-    const wrapper = mount(ServiceForm)
+    const wrapper = mount(ServiceForm, { global: { plugins: [createTestI18n()] } })
     expect(wrapper.find('input[type="text"]').exists()).toBe(true)
     expect(wrapper.find('input[type="email"]').exists()).toBe(true)
     expect(wrapper.find('input[type="password"]').exists()).toBe(true)
@@ -28,25 +29,25 @@ describe('ServiceForm', () => {
   })
 
   it('does not render the other service field by default', () => {
-    const wrapper = mount(ServiceForm)
+    const wrapper = mount(ServiceForm, { global: { plugins: [createTestI18n()] } })
     expect(wrapper.find('[data-testid="other-service-input"]').exists()).toBe(false)
   })
 
   it('renders the other service field when Other is selected', async () => {
-    const wrapper = mount(ServiceForm)
+    const wrapper = mount(ServiceForm, { global: { plugins: [createTestI18n()] } })
     await wrapper.find('select').setValue('other')
     expect(wrapper.find('[data-testid="other-service-input"]').exists()).toBe(true)
   })
 
   it('hides the other service field when a different option is selected', async () => {
-    const wrapper = mount(ServiceForm)
+    const wrapper = mount(ServiceForm, { global: { plugins: [createTestI18n()] } })
     await wrapper.find('select').setValue('other')
     await wrapper.find('select').setValue('web-development')
     expect(wrapper.find('[data-testid="other-service-input"]').exists()).toBe(false)
   })
 
   it('shows a success message after valid form submission', async () => {
-    const wrapper = mount(ServiceForm)
+    const wrapper = mount(ServiceForm, { global: { plugins: [createTestI18n()] } })
     await fillValidForm(wrapper)
     await wrapper.find('form').trigger('submit')
     await wrapper.vm.$nextTick()
@@ -54,13 +55,13 @@ describe('ServiceForm', () => {
   })
 
   it('does not show success message if required fields are empty', async () => {
-    const wrapper = mount(ServiceForm)
+    const wrapper = mount(ServiceForm, { global: { plugins: [createTestI18n()] } })
     await wrapper.find('[data-testid="submit-button"]').trigger('click')
     expect(wrapper.find('[data-testid="success-message"]').exists()).toBe(false)
   })
 
   it('shows validation error messages after failed submit', async () => {
-    const wrapper = mount(ServiceForm)
+    const wrapper = mount(ServiceForm, { global: { plugins: [createTestI18n()] } })
     await wrapper.find('form').trigger('submit')
     await wrapper.vm.$nextTick()
     const errorTexts = wrapper.findAll('[data-testid="error"]').map((e) => e.text())
@@ -71,7 +72,7 @@ describe('ServiceForm', () => {
   })
 
   it('shows an error when Other is selected but the specify field is empty', async () => {
-    const wrapper = mount(ServiceForm)
+    const wrapper = mount(ServiceForm, { global: { plugins: [createTestI18n()] } })
     await wrapper.find('select').setValue('other')
     await wrapper.find('form').trigger('submit')
     await wrapper.vm.$nextTick()
@@ -80,7 +81,7 @@ describe('ServiceForm', () => {
   })
 
   it('sets aria-invalid on inputs with errors after failed submit', async () => {
-    const wrapper = mount(ServiceForm)
+    const wrapper = mount(ServiceForm, { global: { plugins: [createTestI18n()] } })
     await wrapper.find('form').trigger('submit')
     await wrapper.vm.$nextTick()
     expect(wrapper.find('input[type="text"]').attributes('aria-invalid')).toBe('true')
@@ -91,7 +92,7 @@ describe('ServiceForm', () => {
   })
 
   it('clears an error message when a field passes validation on blur', async () => {
-    const wrapper = mount(ServiceForm)
+    const wrapper = mount(ServiceForm, { global: { plugins: [createTestI18n()] } })
     await wrapper.find('form').trigger('submit')
     await wrapper.vm.$nextTick()
     await wrapper.find('input[type="text"]').setValue('Dan')
@@ -99,5 +100,40 @@ describe('ServiceForm', () => {
     await wrapper.vm.$nextTick()
     const errorTexts = wrapper.findAll('[data-testid="error"]').map((e) => e.text())
     expect(errorTexts).not.toContain('Name must be at least 2 characters')
+  })
+
+  it('renders labels in French when locale is fr', () => {
+    const wrapper = mount(ServiceForm, {
+      global: {
+        plugins: [createTestI18n('fr')],
+      },
+    })
+    const labels = wrapper.findAll('label').map((l) => l.text())
+    expect(labels).toContain('Nom')
+    expect(labels).toContain('E-mail')
+    expect(labels).toContain('Mot de passe')
+  })
+
+  it('renders labels in Italian when locale is it', () => {
+    const wrapper = mount(ServiceForm, {
+      global: {
+        plugins: [createTestI18n('it')],
+      },
+    })
+    const labels = wrapper.findAll('label').map((l) => l.text())
+    expect(labels).toContain('Nome')
+    expect(labels).toContain('E-mail')
+    expect(labels).toContain('Password')
+  })
+
+  it('renders success message in French after valid submission', async () => {
+    const i18n = createTestI18n('fr')
+    const wrapper = mount(ServiceForm, {
+      global: { plugins: [i18n] },
+    })
+    await fillValidForm(wrapper)
+    await wrapper.find('form').trigger('submit')
+    await wrapper.vm.$nextTick()
+    expect(wrapper.find('[data-testid="success-message"]').text()).toContain('Merci')
   })
 })

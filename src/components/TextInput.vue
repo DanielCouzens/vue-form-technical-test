@@ -6,6 +6,7 @@
       :id="inputId"
       :value="modelValue"
       type="text"
+      :placeholder="placeholder"
       :aria-invalid="!!error"
       :aria-describedby="error ? `${inputId}-error` : undefined"
       @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
@@ -22,6 +23,7 @@ defineOptions({ inheritAttrs: false })
 defineProps<{
   label: string
   modelValue: string
+  placeholder?: string
   error?: string
 }>()
 

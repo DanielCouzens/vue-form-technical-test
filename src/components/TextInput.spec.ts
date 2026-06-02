@@ -44,6 +44,13 @@ describe('TextInput', () => {
     expect(wrapper.find('[data-testid="error"]').attributes('id')).toBe(`${id}-error`)
   })
 
+  it('renders placeholder text when placeholder prop is set', () => {
+    const wrapper = mount(TextInput, {
+      props: { label: 'Name', modelValue: '', placeholder: 'Enter your name' },
+    })
+    expect(wrapper.find('input').attributes('placeholder')).toBe('Enter your name')
+  })
+
   it('does not set aria-describedby when no error', () => {
     const wrapper = mount(TextInput, {
       props: { label: 'Name', modelValue: '' },

@@ -14,35 +14,33 @@ type ValidatorMap = {
   [K in keyof ServiceFormData]: (value: ServiceFormData[K], formData?: ServiceFormData) => string
 }
 
-const validators: ValidatorMap = {
-  name: (value: string) => (value.trim().length >= 2 ? '' : 'Name must be at least 2 characters'),
+export function useFormValidation(form: ServiceFormData, t: (key: string) => string) {
+  const validators: ValidatorMap = {
+    name: (value: string) => (value.trim().length >= 2 ? '' : t('form.validation.nameMinLength')),
 
-  email: (value: string) =>
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? '' : 'Please enter a valid email address',
+    email: (value: string) =>
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? '' : t('form.validation.emailInvalid'),
 
-  password: (value: string) =>
-    value.length >= 8 && /\d/.test(value)
-      ? ''
-      : 'Password must be at least 8 characters and contain at least one number',
+    password: (value: string) =>
+      value.length >= 8 && /\d/.test(value) ? '' : t('form.validation.passwordRequirements'),
 
-  dateOfBirth: (value: string) => {
-    if (!value) return ''
-    return new Date(value) < new Date() ? '' : 'Date of birth must be in the past'
-  },
+    dateOfBirth: (value: string) => {
+      if (!value) return ''
+      return new Date(value) < new Date() ? '' : t('form.validation.dateOfBirthFuture')
+    },
 
-  service: (value: string) => (value ? '' : 'Please select a service'),
+    service: (value: string) => (value ? '' : t('form.validation.serviceRequired')),
 
-  otherService: (value: string, formData?: ServiceFormData) => {
-    if (formData?.service === 'other') {
-      return value.trim().length >= 2 ? '' : 'Please specify the service'
-    }
-    return ''
-  },
+    otherService: (value: string, formData?: ServiceFormData) => {
+      if (formData?.service === 'other') {
+        return value.trim().length >= 2 ? '' : t('form.validation.otherServiceRequired')
+      }
+      return ''
+    },
 
-  terms: (value: boolean) => (value ? '' : 'You must accept the terms and conditions'),
-}
+    terms: (value: boolean) => (value ? '' : t('form.validation.termsRequired')),
+  }
 
-export function useFormValidation(form: ServiceFormData) {
   const errors = reactive<Record<keyof ServiceFormData, string>>({
     name: '',
     email: '',

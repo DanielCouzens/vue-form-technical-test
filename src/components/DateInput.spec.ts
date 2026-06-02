@@ -41,6 +41,13 @@ describe('DateInput', () => {
     expect(wrapper.find('input').attributes('max')).toBe(today)
   })
 
+  it('renders placeholder text when placeholder prop is set', () => {
+    const wrapper = mount(DateInput, {
+      props: { label: 'Date of Birth', modelValue: '', placeholder: 'YYYY-MM-DD' },
+    })
+    expect(wrapper.find('input').attributes('placeholder')).toBe('YYYY-MM-DD')
+  })
+
   it('does not set aria-describedby when no error', () => {
     const wrapper = mount(DateInput, {
       props: { label: 'Date of Birth', modelValue: '' },
