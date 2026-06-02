@@ -89,4 +89,15 @@ describe('ServiceForm', () => {
     expect(wrapper.find('select').attributes('aria-invalid')).toBe('true')
     expect(wrapper.find('input[type="checkbox"]').attributes('aria-invalid')).toBe('true')
   })
+
+  it('clears an error message when a field passes validation on blur', async () => {
+    const wrapper = mount(ServiceForm)
+    await wrapper.find('form').trigger('submit')
+    await wrapper.vm.$nextTick()
+    await wrapper.find('input[type="text"]').setValue('Dan')
+    await wrapper.find('input[type="text"]').trigger('blur')
+    await wrapper.vm.$nextTick()
+    const errorTexts = wrapper.findAll('[data-testid="error"]').map((e) => e.text())
+    expect(errorTexts).not.toContain('Name must be at least 2 characters')
+  })
 })
