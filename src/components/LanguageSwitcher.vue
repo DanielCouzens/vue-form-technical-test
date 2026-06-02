@@ -1,8 +1,14 @@
 <template>
-  <div>
+  <div class="absolute top-4 right-4 inline-flex gap-1">
     <button
       v-for="lang in languages"
       :key="lang.code"
+      :class="[
+        'px-3 py-1 text-sm rounded-full',
+        locale === lang.code
+          ? 'bg-brand text-white'
+          : 'bg-gray-100 text-gray-600 hover:bg-gray-200',
+      ]"
       :aria-current="locale === lang.code ? 'true' : undefined"
       @click="switchLocale(lang.code)"
     >

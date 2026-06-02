@@ -1,18 +1,28 @@
 <template>
-  <div>
-    <input
-      v-bind="$attrs"
-      :id="inputId"
-      type="checkbox"
-      :checked="modelValue"
-      :required="required || undefined"
-      :aria-required="required || undefined"
-      :aria-invalid="!!error"
-      :aria-describedby="error ? `${inputId}-error` : undefined"
-      @change="$emit('update:modelValue', ($event.target as HTMLInputElement).checked)"
-    />
-    <label :for="inputId">{{ label }}</label>
-    <span v-if="error" :id="`${inputId}-error`" role="alert" data-testid="error">{{ error }}</span>
+  <div class="space-y-1">
+    <div class="flex items-start gap-2">
+      <input
+        v-bind="$attrs"
+        :id="inputId"
+        type="checkbox"
+        class="mt-0.5 accent-brand"
+        :checked="modelValue"
+        :required="required || undefined"
+        :aria-required="required || undefined"
+        :aria-invalid="!!error"
+        :aria-describedby="error ? `${inputId}-error` : undefined"
+        @change="$emit('update:modelValue', ($event.target as HTMLInputElement).checked)"
+      />
+      <label :for="inputId" class="text-sm font-medium text-gray-700">{{ label }}</label>
+    </div>
+    <span
+      v-if="error"
+      :id="`${inputId}-error`"
+      role="alert"
+      data-testid="error"
+      class="text-sm text-red-600"
+      >{{ error }}</span
+    >
   </div>
 </template>
 

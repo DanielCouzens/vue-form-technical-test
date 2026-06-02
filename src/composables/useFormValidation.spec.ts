@@ -203,6 +203,7 @@ describe('useFormValidation', () => {
       form.name = 'Dan'
       form.email = 'dan@example.com'
       form.password = 'password1'
+      form.dateOfBirth = '1990-01-01'
       form.service = 'web-development'
       form.terms = true
       const { validateAll } = useFormValidation(form, t)

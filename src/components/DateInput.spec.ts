@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import DateInput from '@/components/DateInput.vue'
 
 describe('DateInput', () => {
@@ -46,6 +46,16 @@ describe('DateInput', () => {
       props: { label: 'Date of Birth', modelValue: '', placeholder: 'YYYY-MM-DD' },
     })
     expect(wrapper.find('input').attributes('placeholder')).toBe('YYYY-MM-DD')
+  })
+
+  it('forwards blur event to the input via $attrs', async () => {
+    const onBlur = vi.fn<() => void>()
+    const wrapper = mount(DateInput, {
+      props: { label: 'Date of Birth', modelValue: '' },
+      attrs: { onBlur },
+    })
+    await wrapper.find('input').trigger('blur')
+    expect(onBlur).toHaveBeenCalledOnce()
   })
 
   it('does not set aria-describedby when no error', () => {
