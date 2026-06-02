@@ -25,7 +25,7 @@ All components and composables were built using Test-Driven Development — test
 - It ensures every feature has test coverage by definition
 - The failing tests act as a specification, making the intent of each piece of code clear
 
-The project ends with 93 unit and component tests across 8 test files.
+The project ends with 91 unit and component tests across 8 test files.
 
 ### Project Management
 

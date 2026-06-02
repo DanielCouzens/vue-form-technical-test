@@ -7,7 +7,6 @@
       :value="modelValue"
       type="date"
       :max="today"
-      :placeholder="placeholder"
       :class="[
         'w-full border rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2',
         error
@@ -37,7 +36,6 @@ defineOptions({ inheritAttrs: false })
 defineProps<{
   label: string
   modelValue: string
-  placeholder?: string
   error?: string
 }>()
 
@@ -49,5 +47,3 @@ const inputId = useId()
 
 const today = new Date().toISOString().split('T')[0]
 </script>
-
-<style scoped></style>

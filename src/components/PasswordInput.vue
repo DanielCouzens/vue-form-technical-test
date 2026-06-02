@@ -59,5 +59,3 @@ const { t } = useI18n()
 const inputId = useId()
 const showPassword = ref(false)
 </script>
-
-<style scoped></style>

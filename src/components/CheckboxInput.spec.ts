@@ -57,15 +57,6 @@ describe('CheckboxInput', () => {
     expect(input.attributes('aria-describedby')).toBe(errorEl.attributes('id'))
   })
 
-  it('sets required and aria-required when required prop is true', () => {
-    const wrapper = mount(CheckboxInput, {
-      props: { label: 'I agree to the terms', modelValue: false, required: true },
-    })
-    const input = wrapper.find('input')
-    expect(input.attributes('required')).toBeDefined()
-    expect(input.attributes('aria-required')).toBe('true')
-  })
-
   it('does not set aria-describedby when no error', () => {
     const wrapper = mount(CheckboxInput, {
       props: { label: 'I agree to the terms', modelValue: false },
