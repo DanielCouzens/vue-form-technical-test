@@ -33,11 +33,7 @@
 
 <script setup lang="ts">
 import { useId } from 'vue'
-
-export interface SelectOption {
-  value: string
-  label: string
-}
+import type { SelectOption } from '@/types'
 
 defineOptions({ inheritAttrs: false })
 
