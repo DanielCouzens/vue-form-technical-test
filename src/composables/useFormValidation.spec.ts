@@ -1,4 +1,4 @@
-import { reactive } from 'vue'
+import { nextTick, reactive } from 'vue'
 import { describe, it, expect } from 'vitest'
 import { useFormValidation } from '@/composables/useFormValidation'
 import en from '@/locales/en.json'
@@ -25,24 +25,24 @@ describe('useFormValidation', () => {
   describe('name', () => {
     it('fails when name is empty', () => {
       const form = makeForm()
-      const { validateField, errors } = useFormValidation(form, t)
-      validateField('name')
+      const { onBlur, errors } = useFormValidation(form, t)
+      onBlur('name')
       expect(errors.name).toBe('Name must be at least 2 characters')
     })
 
     it('fails when name is less than 2 characters', () => {
       const form = makeForm()
       form.name = 'D'
-      const { validateField, errors } = useFormValidation(form, t)
-      validateField('name')
+      const { onBlur, errors } = useFormValidation(form, t)
+      onBlur('name')
       expect(errors.name).toBe('Name must be at least 2 characters')
     })
 
     it('passes when name is 2 or more characters', () => {
       const form = makeForm()
       form.name = 'Dan'
-      const { validateField, errors } = useFormValidation(form, t)
-      validateField('name')
+      const { onBlur, errors } = useFormValidation(form, t)
+      onBlur('name')
       expect(errors.name).toBe('')
     })
   })
@@ -50,24 +50,24 @@ describe('useFormValidation', () => {
   describe('email', () => {
     it('fails when email is empty', () => {
       const form = makeForm()
-      const { validateField, errors } = useFormValidation(form, t)
-      validateField('email')
+      const { onBlur, errors } = useFormValidation(form, t)
+      onBlur('email')
       expect(errors.email).toBe('Please enter a valid email address')
     })
 
     it('fails when email format is invalid', () => {
       const form = makeForm()
       form.email = 'notanemail'
-      const { validateField, errors } = useFormValidation(form, t)
-      validateField('email')
+      const { onBlur, errors } = useFormValidation(form, t)
+      onBlur('email')
       expect(errors.email).toBe('Please enter a valid email address')
     })
 
     it('passes when email format is valid', () => {
       const form = makeForm()
       form.email = 'dan@example.com'
-      const { validateField, errors } = useFormValidation(form, t)
-      validateField('email')
+      const { onBlur, errors } = useFormValidation(form, t)
+      onBlur('email')
       expect(errors.email).toBe('')
     })
   })
@@ -75,32 +75,32 @@ describe('useFormValidation', () => {
   describe('password', () => {
     it('fails when password is empty', () => {
       const form = makeForm()
-      const { validateField, errors } = useFormValidation(form, t)
-      validateField('password')
+      const { onBlur, errors } = useFormValidation(form, t)
+      onBlur('password')
       expect(errors.password).toBeTruthy()
     })
 
     it('fails when password is less than 8 characters', () => {
       const form = makeForm()
       form.password = 'pass1'
-      const { validateField, errors } = useFormValidation(form, t)
-      validateField('password')
+      const { onBlur, errors } = useFormValidation(form, t)
+      onBlur('password')
       expect(errors.password).toBeTruthy()
     })
 
     it('fails when password has no number', () => {
       const form = makeForm()
       form.password = 'password'
-      const { validateField, errors } = useFormValidation(form, t)
-      validateField('password')
+      const { onBlur, errors } = useFormValidation(form, t)
+      onBlur('password')
       expect(errors.password).toBeTruthy()
     })
 
     it('passes when password is 8+ characters with a number', () => {
       const form = makeForm()
       form.password = 'password1'
-      const { validateField, errors } = useFormValidation(form, t)
-      validateField('password')
+      const { onBlur, errors } = useFormValidation(form, t)
+      onBlur('password')
       expect(errors.password).toBe('')
     })
   })
@@ -108,24 +108,24 @@ describe('useFormValidation', () => {
   describe('dateOfBirth', () => {
     it('passes when date of birth is empty (optional)', () => {
       const form = makeForm()
-      const { validateField, errors } = useFormValidation(form, t)
-      validateField('dateOfBirth')
+      const { onBlur, errors } = useFormValidation(form, t)
+      onBlur('dateOfBirth')
       expect(errors.dateOfBirth).toBe('')
     })
 
     it('fails when date of birth is in the future', () => {
       const form = makeForm()
       form.dateOfBirth = '2099-01-01'
-      const { validateField, errors } = useFormValidation(form, t)
-      validateField('dateOfBirth')
+      const { onBlur, errors } = useFormValidation(form, t)
+      onBlur('dateOfBirth')
       expect(errors.dateOfBirth).toBeTruthy()
     })
 
     it('passes when date of birth is in the past', () => {
       const form = makeForm()
       form.dateOfBirth = '1990-01-01'
-      const { validateField, errors } = useFormValidation(form, t)
-      validateField('dateOfBirth')
+      const { onBlur, errors } = useFormValidation(form, t)
+      onBlur('dateOfBirth')
       expect(errors.dateOfBirth).toBe('')
     })
   })
@@ -133,16 +133,16 @@ describe('useFormValidation', () => {
   describe('service', () => {
     it('fails when no service is selected', () => {
       const form = makeForm()
-      const { validateField, errors } = useFormValidation(form, t)
-      validateField('service')
+      const { onBlur, errors } = useFormValidation(form, t)
+      onBlur('service')
       expect(errors.service).toBeTruthy()
     })
 
     it('passes when a service is selected', () => {
       const form = makeForm()
       form.service = 'web-development'
-      const { validateField, errors } = useFormValidation(form, t)
-      validateField('service')
+      const { onBlur, errors } = useFormValidation(form, t)
+      onBlur('service')
       expect(errors.service).toBe('')
     })
   })
@@ -151,16 +151,16 @@ describe('useFormValidation', () => {
     it('passes when service is not other and otherService is empty', () => {
       const form = makeForm()
       form.service = 'web-development'
-      const { validateField, errors } = useFormValidation(form, t)
-      validateField('otherService')
+      const { onBlur, errors } = useFormValidation(form, t)
+      onBlur('otherService')
       expect(errors.otherService).toBe('')
     })
 
     it('fails when service is other and otherService is empty', () => {
       const form = makeForm()
       form.service = 'other'
-      const { validateField, errors } = useFormValidation(form, t)
-      validateField('otherService')
+      const { onBlur, errors } = useFormValidation(form, t)
+      onBlur('otherService')
       expect(errors.otherService).toBeTruthy()
     })
 
@@ -168,8 +168,8 @@ describe('useFormValidation', () => {
       const form = makeForm()
       form.service = 'other'
       form.otherService = 'Consulting'
-      const { validateField, errors } = useFormValidation(form, t)
-      validateField('otherService')
+      const { onBlur, errors } = useFormValidation(form, t)
+      onBlur('otherService')
       expect(errors.otherService).toBe('')
     })
   })
@@ -177,25 +177,47 @@ describe('useFormValidation', () => {
   describe('terms', () => {
     it('fails when terms are not accepted', () => {
       const form = makeForm()
-      const { validateField, errors } = useFormValidation(form, t)
-      validateField('terms')
+      const { onBlur, errors } = useFormValidation(form, t)
+      onBlur('terms')
       expect(errors.terms).toBeTruthy()
     })
 
     it('passes when terms are accepted', () => {
       const form = makeForm()
       form.terms = true
-      const { validateField, errors } = useFormValidation(form, t)
-      validateField('terms')
+      const { onBlur, errors } = useFormValidation(form, t)
+      onBlur('terms')
       expect(errors.terms).toBe('')
     })
   })
 
-  describe('validateAll', () => {
+  describe('onInput', () => {
+    it('does not validate when there is no existing error', () => {
+      const form = makeForm()
+      form.name = 'Dan'
+      const { onInput, errors } = useFormValidation(form, t)
+      form.name = 'D'
+      onInput('name')
+      expect(errors.name).toBe('')
+    })
+
+    it('re-validates when an error already exists', async () => {
+      const form = makeForm()
+      const { onBlur, onInput, errors } = useFormValidation(form, t)
+      onBlur('name')
+      expect(errors.name).toBeTruthy()
+      form.name = 'Dan'
+      onInput('name')
+      await nextTick()
+      expect(errors.name).toBe('')
+    })
+  })
+
+  describe('handleSubmit', () => {
     it('returns false when required fields are empty', () => {
       const form = makeForm()
-      const { validateAll } = useFormValidation(form, t)
-      expect(validateAll()).toBe(false)
+      const { handleSubmit } = useFormValidation(form, t)
+      expect(handleSubmit()).toBe(false)
     })
 
     it('returns true when all required fields are valid', () => {
@@ -206,8 +228,8 @@ describe('useFormValidation', () => {
       form.dateOfBirth = '1990-01-01'
       form.service = 'web-development'
       form.terms = true
-      const { validateAll } = useFormValidation(form, t)
-      expect(validateAll()).toBe(true)
+      const { handleSubmit } = useFormValidation(form, t)
+      expect(handleSubmit()).toBe(true)
     })
 
     it('returns false when other is selected but otherService is empty', () => {
@@ -218,15 +240,15 @@ describe('useFormValidation', () => {
       form.service = 'other'
       form.otherService = ''
       form.terms = true
-      const { validateAll } = useFormValidation(form, t)
-      expect(validateAll()).toBe(false)
+      const { handleSubmit } = useFormValidation(form, t)
+      expect(handleSubmit()).toBe(false)
     })
   })
 
-  it('populates all errors when validation fails', () => {
+  it('populates all errors when handleSubmit fails', () => {
     const form = makeForm()
-    const { validateAll, errors } = useFormValidation(form, t)
-    validateAll()
+    const { handleSubmit, errors } = useFormValidation(form, t)
+    handleSubmit()
     expect(errors.name).toBeTruthy()
     expect(errors.email).toBeTruthy()
     expect(errors.password).toBeTruthy()

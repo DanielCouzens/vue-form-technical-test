@@ -1,4 +1,4 @@
-import { reactive } from 'vue'
+import { nextTick, reactive } from 'vue'
 import type { ServiceFormData } from '@/types'
 
 type ValidatorMap = {
@@ -62,5 +62,17 @@ export function useFormValidation(form: ServiceFormData, t: (key: string) => str
     return results.every(Boolean)
   }
 
-  return { errors, validateField, validateAll }
+  function onBlur(field: keyof ServiceFormData): void {
+    validateField(field)
+  }
+
+  function onInput(field: keyof ServiceFormData): void {
+    if (errors[field]) nextTick(() => validateField(field))
+  }
+
+  function handleSubmit(): boolean {
+    return validateAll()
+  }
+
+  return { errors, onBlur, onInput, handleSubmit }
 }
