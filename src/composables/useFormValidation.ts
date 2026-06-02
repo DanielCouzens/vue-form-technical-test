@@ -1,14 +1,5 @@
 import { reactive } from 'vue'
-
-export type ServiceFormData = {
-  name: string
-  email: string
-  password: string
-  dateOfBirth: string
-  service: string
-  otherService: string
-  terms: boolean
-}
+import type { ServiceFormData } from '@/types'
 
 type ValidatorMap = {
   [K in keyof ServiceFormData]: (value: ServiceFormData[K], formData?: ServiceFormData) => string

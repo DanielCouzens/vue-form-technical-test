@@ -106,9 +106,8 @@ import PasswordInput from '@/components/PasswordInput.vue'
 import DateInput from '@/components/DateInput.vue'
 import SelectInput from '@/components/SelectInput.vue'
 import CheckboxInput from '@/components/CheckboxInput.vue'
-import type { SelectOption } from '@/components/SelectInput.vue'
+import type { SelectOption, ServiceFormData } from '@/types'
 import { useFormValidation } from '@/composables/useFormValidation'
-import type { ServiceFormData } from '@/composables/useFormValidation'
 
 const { t, locale } = useI18n()
 
