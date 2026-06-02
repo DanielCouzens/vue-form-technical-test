@@ -6,8 +6,8 @@
         :label="t('form.fields.name')"
         :placeholder="t('form.placeholders.name')"
         :error="errors.name"
-        @blur="validateField('name')"
-        @input="errors.name && $nextTick(() => validateField('name'))"
+        @blur="onBlur('name')"
+        @input="onInput('name')"
       />
       <TextInput
         type="email"
@@ -15,22 +15,22 @@
         :label="t('form.fields.email')"
         :placeholder="t('form.placeholders.email')"
         :error="errors.email"
-        @blur="validateField('email')"
-        @input="errors.email && $nextTick(() => validateField('email'))"
+        @blur="onBlur('email')"
+        @input="onInput('email')"
       />
       <PasswordInput
         v-model="form.password"
         :label="t('form.fields.password')"
         :placeholder="t('form.placeholders.password')"
         :error="errors.password"
-        @blur="validateField('password')"
-        @input="errors.password && $nextTick(() => validateField('password'))"
+        @blur="onBlur('password')"
+        @input="onInput('password')"
       />
       <DateInput
         v-model="form.dateOfBirth"
         :label="t('form.fields.dateOfBirth')"
         :error="errors.dateOfBirth"
-        @blur="validateField('dateOfBirth')"
+        @blur="onBlur('dateOfBirth')"
       />
       <SelectInput
         v-model="form.service"
@@ -38,8 +38,8 @@
         :options="serviceOptions"
         :placeholder="t('form.options.selectService')"
         :error="errors.service"
-        @blur="validateField('service')"
-        @change="errors.service && $nextTick(() => validateField('service'))"
+        @blur="onBlur('service')"
+        @change="onInput('service')"
       />
       <Transition
         enter-active-class="transition-opacity duration-200 ease-in-out"
@@ -54,16 +54,16 @@
           :placeholder="t('form.placeholders.otherService')"
           :error="errors.otherService"
           data-testid="other-service-input"
-          @blur="validateField('otherService')"
-          @input="errors.otherService && $nextTick(() => validateField('otherService'))"
+          @blur="onBlur('otherService')"
+          @input="onInput('otherService')"
         />
       </Transition>
       <CheckboxInput
         v-model="form.terms"
         :label="t('form.fields.terms')"
         :error="errors.terms"
-        @blur="validateField('terms')"
-        @change="errors.terms && $nextTick(() => validateField('terms'))"
+        @blur="onBlur('terms')"
+        @change="onInput('terms')"
       />
       <button
         type="submit"
@@ -128,17 +128,17 @@ const form = reactive<ServiceFormData>({
   terms: false,
 })
 
-const { errors, validateField, validateAll } = useFormValidation(form, t)
+const { errors, onBlur, onInput, handleSubmit: validateForm } = useFormValidation(form, t)
 
 const submitted = ref(false)
 
 watch(locale, () => {
   ;(Object.keys(errors) as Array<keyof ServiceFormData>).forEach((field) => {
-    if (errors[field]) validateField(field)
+    if (errors[field]) onBlur(field)
   })
 })
 
 function handleSubmit() {
-  if (validateAll()) submitted.value = true
+  if (validateForm()) submitted.value = true
 }
 </script>
