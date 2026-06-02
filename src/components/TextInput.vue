@@ -5,7 +5,7 @@
       v-bind="$attrs"
       :id="inputId"
       :value="modelValue"
-      type="text"
+      :type="type"
       :placeholder="placeholder"
       :class="[
         'w-full border rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2',
@@ -33,12 +33,16 @@ import { useId } from 'vue'
 
 defineOptions({ inheritAttrs: false })
 
-defineProps<{
-  label: string
-  modelValue: string
-  placeholder?: string
-  error?: string
-}>()
+withDefaults(
+  defineProps<{
+    label: string
+    modelValue: string
+    type?: string
+    placeholder?: string
+    error?: string
+  }>(),
+  { type: 'text' },
+)
 
 defineEmits<{
   'update:modelValue': [value: string]

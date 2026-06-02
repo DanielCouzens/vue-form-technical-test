@@ -6,7 +6,8 @@ import { createTestI18n } from '@/test-utils'
 const fillValidForm = async (wrapper: ReturnType<typeof mount>) => {
   await wrapper.findComponent({ name: 'TextInput' }).vm.$emit('update:modelValue', 'Dan')
   await wrapper
-    .findComponent({ name: 'EmailInput' })
+    .findAllComponents({ name: 'TextInput' })
+    .at(1)!
     .vm.$emit('update:modelValue', 'dan@example.com')
   await wrapper.findComponent({ name: 'PasswordInput' }).vm.$emit('update:modelValue', 'password1')
   await wrapper.findComponent({ name: 'DateInput' }).vm.$emit('update:modelValue', '1995-05-15')
