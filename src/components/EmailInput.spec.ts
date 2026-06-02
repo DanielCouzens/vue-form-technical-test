@@ -33,6 +33,13 @@ describe('EmailInput', () => {
     expect(wrapper.find('label').attributes('for')).toBe(id)
   })
 
+  it('renders placeholder text when placeholder prop is set', () => {
+    const wrapper = mount(EmailInput, {
+      props: { label: 'Email', modelValue: '', placeholder: 'Enter your email' },
+    })
+    expect(wrapper.find('input').attributes('placeholder')).toBe('Enter your email')
+  })
+
   it('does not set aria-describedby when no error', () => {
     const wrapper = mount(EmailInput, {
       props: { label: 'Email', modelValue: '' },

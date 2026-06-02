@@ -1,11 +1,13 @@
 import { mount } from '@vue/test-utils'
 import { describe, it, expect } from 'vitest'
 import PasswordInput from '@/components/PasswordInput.vue'
+import { createTestI18n } from '@/test-utils'
 
 describe('PasswordInput', () => {
   it('renders a label and input of type password by default', () => {
     const wrapper = mount(PasswordInput, {
       props: { label: 'Password', modelValue: '' },
+      global: { plugins: [createTestI18n()] },
     })
     expect(wrapper.find('label').text()).toBe('Password')
     expect(wrapper.find('input').attributes('type')).toBe('password')
@@ -14,14 +16,24 @@ describe('PasswordInput', () => {
   it('emits update:modelValue on input', async () => {
     const wrapper = mount(PasswordInput, {
       props: { label: 'Password', modelValue: '' },
+      global: { plugins: [createTestI18n()] },
     })
     await wrapper.find('input').setValue('secret123')
     expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['secret123'])
   })
 
+  it('renders show/hide button text from locale', () => {
+    const wrapper = mount(PasswordInput, {
+      props: { label: 'Password', modelValue: '' },
+      global: { plugins: [createTestI18n()] },
+    })
+    expect(wrapper.find('[data-testid="toggle-password"]').text()).toBe('Show')
+  })
+
   it('toggles input type to text when show password is clicked', async () => {
     const wrapper = mount(PasswordInput, {
       props: { label: 'Password', modelValue: '' },
+      global: { plugins: [createTestI18n()] },
     })
     await wrapper.find('[data-testid="toggle-password"]').trigger('click')
     expect(wrapper.find('input').attributes('type')).toBe('text')
@@ -30,6 +42,7 @@ describe('PasswordInput', () => {
   it('toggles input type back to password on second click', async () => {
     const wrapper = mount(PasswordInput, {
       props: { label: 'Password', modelValue: '' },
+      global: { plugins: [createTestI18n()] },
     })
     await wrapper.find('[data-testid="toggle-password"]').trigger('click')
     await wrapper.find('[data-testid="toggle-password"]').trigger('click')
@@ -39,20 +52,33 @@ describe('PasswordInput', () => {
   it('displays an error message when error prop is set', () => {
     const wrapper = mount(PasswordInput, {
       props: { label: 'Password', modelValue: '', error: 'Password is required' },
+      global: { plugins: [createTestI18n()] },
     })
     expect(wrapper.find('[data-testid="error"]').text()).toBe('Password is required')
   })
 
   it('links label to input via id', () => {
-    const wrapper = mount(PasswordInput, { props: { label: 'Password', modelValue: '' } })
+    const wrapper = mount(PasswordInput, {
+      props: { label: 'Password', modelValue: '' },
+      global: { plugins: [createTestI18n()] },
+    })
     const id = wrapper.find('input').attributes('id')
     expect(id).toBeTruthy()
     expect(wrapper.find('label').attributes('for')).toBe(id)
   })
 
+  it('renders placeholder text when placeholder prop is set', () => {
+    const wrapper = mount(PasswordInput, {
+      props: { label: 'Password', modelValue: '', placeholder: 'Enter your password' },
+      global: { plugins: [createTestI18n()] },
+    })
+    expect(wrapper.find('input').attributes('placeholder')).toBe('Enter your password')
+  })
+
   it('does not set aria-describedby when no error', () => {
     const wrapper = mount(PasswordInput, {
       props: { label: 'Password', modelValue: '' },
+      global: { plugins: [createTestI18n()] },
     })
     expect(wrapper.find('input').attributes('aria-invalid')).toBe('false')
     expect(wrapper.find('input').attributes('aria-describedby')).toBeUndefined()

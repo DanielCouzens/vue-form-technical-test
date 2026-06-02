@@ -7,7 +7,9 @@
       "dateOfBirth": "Date of Birth",
       "service": "Service",
       "otherService": "Please specify",
-      "terms": "I agree to the terms and conditions"
+      "terms": "I agree to the terms and conditions",
+      "showPassword": "Show",
+      "hidePassword": "Hide"
     },
     "placeholders": {
       "name": "Enter your name",

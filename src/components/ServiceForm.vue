@@ -3,33 +3,36 @@
     <form v-if="!submitted" @submit.prevent="handleSubmit">
       <TextInput
         v-model="form.name"
-        label="Name"
+        :label="t('form.fields.name')"
+        :placeholder="t('form.placeholders.name')"
         :error="errors.name"
         @blur="validateField('name')"
       />
       <EmailInput
         v-model="form.email"
-        label="Email"
+        :label="t('form.fields.email')"
+        :placeholder="t('form.placeholders.email')"
         :error="errors.email"
         @blur="validateField('email')"
       />
       <PasswordInput
         v-model="form.password"
-        label="Password"
+        :label="t('form.fields.password')"
+        :placeholder="t('form.placeholders.password')"
         :error="errors.password"
         @blur="validateField('password')"
       />
       <DateInput
         v-model="form.dateOfBirth"
-        label="Date of Birth"
+        :label="t('form.fields.dateOfBirth')"
         :error="errors.dateOfBirth"
         @blur="validateField('dateOfBirth')"
       />
       <SelectInput
         v-model="form.service"
-        label="Service"
+        :label="t('form.fields.service')"
         :options="serviceOptions"
-        placeholder="Select a service..."
+        :placeholder="t('form.options.selectService')"
         :error="errors.service"
         @blur="validateField('service')"
       />
@@ -42,28 +45,26 @@
         <TextInput
           v-if="form.service === 'other'"
           v-model="form.otherService"
-          label="Please specify"
+          :label="t('form.fields.otherService')"
+          :placeholder="t('form.placeholders.otherService')"
           :error="errors.otherService"
           data-testid="other-service-input"
           @blur="validateField('otherService')"
         />
       </Transition>
-      <CheckboxInput
-        v-model="form.terms"
-        label="I agree to the terms and conditions"
-        :error="errors.terms"
-      />
-      <button type="submit" data-testid="submit-button">Submit</button>
+      <CheckboxInput v-model="form.terms" :label="t('form.fields.terms')" :error="errors.terms" />
+      <button type="submit" data-testid="submit-button">{{ t('form.submit') }}</button>
     </form>
 
     <div v-else data-testid="success-message">
-      <p>Thank you! Your enquiry has been submitted.</p>
+      <p>{{ t('form.success') }}</p>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import TextInput from '@/components/TextInput.vue'
 import EmailInput from '@/components/EmailInput.vue'
 import PasswordInput from '@/components/PasswordInput.vue'
@@ -74,12 +75,14 @@ import type { SelectOption } from '@/components/SelectInput.vue'
 import { useFormValidation } from '@/composables/useFormValidation'
 import type { ServiceFormData } from '@/composables/useFormValidation'
 
-const serviceOptions: SelectOption[] = [
-  { value: 'web-development', label: 'Web Development' },
-  { value: 'mobile-development', label: 'Mobile Development' },
-  { value: 'seo-services', label: 'SEO Services' },
-  { value: 'other', label: 'Other' },
-]
+const { t } = useI18n()
+
+const serviceOptions = computed<SelectOption[]>(() => [
+  { value: 'web-development', label: t('form.options.webDevelopment') },
+  { value: 'mobile-development', label: t('form.options.mobileDevelopment') },
+  { value: 'seo-services', label: t('form.options.seoServices') },
+  { value: 'other', label: t('form.options.other') },
+])
 
 const form = reactive<ServiceFormData>({
   name: '',
@@ -91,7 +94,7 @@ const form = reactive<ServiceFormData>({
   terms: false,
 })
 
-const { errors, validateField, validateAll } = useFormValidation(form)
+const { errors, validateField, validateAll } = useFormValidation(form, t)
 
 const submitted = ref(false)
 

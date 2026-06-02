@@ -1,6 +1,14 @@
 import { reactive } from 'vue'
 import { describe, it, expect } from 'vitest'
 import { useFormValidation } from '@/composables/useFormValidation'
+import en from '@/locales/en.json'
+
+const t = (key: string): string => {
+  const keys = key.split('.')
+  let result: Record<string, unknown> = en
+  for (const k of keys) result = result[k] as Record<string, unknown>
+  return result as unknown as string
+}
 
 const makeForm = () =>
   reactive({
@@ -17,7 +25,7 @@ describe('useFormValidation', () => {
   describe('name', () => {
     it('fails when name is empty', () => {
       const form = makeForm()
-      const { validateField, errors } = useFormValidation(form)
+      const { validateField, errors } = useFormValidation(form, t)
       validateField('name')
       expect(errors.name).toBe('Name must be at least 2 characters')
     })
@@ -25,7 +33,7 @@ describe('useFormValidation', () => {
     it('fails when name is less than 2 characters', () => {
       const form = makeForm()
       form.name = 'D'
-      const { validateField, errors } = useFormValidation(form)
+      const { validateField, errors } = useFormValidation(form, t)
       validateField('name')
       expect(errors.name).toBe('Name must be at least 2 characters')
     })
@@ -33,7 +41,7 @@ describe('useFormValidation', () => {
     it('passes when name is 2 or more characters', () => {
       const form = makeForm()
       form.name = 'Dan'
-      const { validateField, errors } = useFormValidation(form)
+      const { validateField, errors } = useFormValidation(form, t)
       validateField('name')
       expect(errors.name).toBe('')
     })
@@ -42,7 +50,7 @@ describe('useFormValidation', () => {
   describe('email', () => {
     it('fails when email is empty', () => {
       const form = makeForm()
-      const { validateField, errors } = useFormValidation(form)
+      const { validateField, errors } = useFormValidation(form, t)
       validateField('email')
       expect(errors.email).toBe('Please enter a valid email address')
     })
@@ -50,7 +58,7 @@ describe('useFormValidation', () => {
     it('fails when email format is invalid', () => {
       const form = makeForm()
       form.email = 'notanemail'
-      const { validateField, errors } = useFormValidation(form)
+      const { validateField, errors } = useFormValidation(form, t)
       validateField('email')
       expect(errors.email).toBe('Please enter a valid email address')
     })
@@ -58,7 +66,7 @@ describe('useFormValidation', () => {
     it('passes when email format is valid', () => {
       const form = makeForm()
       form.email = 'dan@example.com'
-      const { validateField, errors } = useFormValidation(form)
+      const { validateField, errors } = useFormValidation(form, t)
       validateField('email')
       expect(errors.email).toBe('')
     })
@@ -67,7 +75,7 @@ describe('useFormValidation', () => {
   describe('password', () => {
     it('fails when password is empty', () => {
       const form = makeForm()
-      const { validateField, errors } = useFormValidation(form)
+      const { validateField, errors } = useFormValidation(form, t)
       validateField('password')
       expect(errors.password).toBeTruthy()
     })
@@ -75,7 +83,7 @@ describe('useFormValidation', () => {
     it('fails when password is less than 8 characters', () => {
       const form = makeForm()
       form.password = 'pass1'
-      const { validateField, errors } = useFormValidation(form)
+      const { validateField, errors } = useFormValidation(form, t)
       validateField('password')
       expect(errors.password).toBeTruthy()
     })
@@ -83,7 +91,7 @@ describe('useFormValidation', () => {
     it('fails when password has no number', () => {
       const form = makeForm()
       form.password = 'password'
-      const { validateField, errors } = useFormValidation(form)
+      const { validateField, errors } = useFormValidation(form, t)
       validateField('password')
       expect(errors.password).toBeTruthy()
     })
@@ -91,7 +99,7 @@ describe('useFormValidation', () => {
     it('passes when password is 8+ characters with a number', () => {
       const form = makeForm()
       form.password = 'password1'
-      const { validateField, errors } = useFormValidation(form)
+      const { validateField, errors } = useFormValidation(form, t)
       validateField('password')
       expect(errors.password).toBe('')
     })
@@ -100,7 +108,7 @@ describe('useFormValidation', () => {
   describe('dateOfBirth', () => {
     it('passes when date of birth is empty (optional)', () => {
       const form = makeForm()
-      const { validateField, errors } = useFormValidation(form)
+      const { validateField, errors } = useFormValidation(form, t)
       validateField('dateOfBirth')
       expect(errors.dateOfBirth).toBe('')
     })
@@ -108,7 +116,7 @@ describe('useFormValidation', () => {
     it('fails when date of birth is in the future', () => {
       const form = makeForm()
       form.dateOfBirth = '2099-01-01'
-      const { validateField, errors } = useFormValidation(form)
+      const { validateField, errors } = useFormValidation(form, t)
       validateField('dateOfBirth')
       expect(errors.dateOfBirth).toBeTruthy()
     })
@@ -116,7 +124,7 @@ describe('useFormValidation', () => {
     it('passes when date of birth is in the past', () => {
       const form = makeForm()
       form.dateOfBirth = '1990-01-01'
-      const { validateField, errors } = useFormValidation(form)
+      const { validateField, errors } = useFormValidation(form, t)
       validateField('dateOfBirth')
       expect(errors.dateOfBirth).toBe('')
     })
@@ -125,7 +133,7 @@ describe('useFormValidation', () => {
   describe('service', () => {
     it('fails when no service is selected', () => {
       const form = makeForm()
-      const { validateField, errors } = useFormValidation(form)
+      const { validateField, errors } = useFormValidation(form, t)
       validateField('service')
       expect(errors.service).toBeTruthy()
     })
@@ -133,7 +141,7 @@ describe('useFormValidation', () => {
     it('passes when a service is selected', () => {
       const form = makeForm()
       form.service = 'web-development'
-      const { validateField, errors } = useFormValidation(form)
+      const { validateField, errors } = useFormValidation(form, t)
       validateField('service')
       expect(errors.service).toBe('')
     })
@@ -143,7 +151,7 @@ describe('useFormValidation', () => {
     it('passes when service is not other and otherService is empty', () => {
       const form = makeForm()
       form.service = 'web-development'
-      const { validateField, errors } = useFormValidation(form)
+      const { validateField, errors } = useFormValidation(form, t)
       validateField('otherService')
       expect(errors.otherService).toBe('')
     })
@@ -151,7 +159,7 @@ describe('useFormValidation', () => {
     it('fails when service is other and otherService is empty', () => {
       const form = makeForm()
       form.service = 'other'
-      const { validateField, errors } = useFormValidation(form)
+      const { validateField, errors } = useFormValidation(form, t)
       validateField('otherService')
       expect(errors.otherService).toBeTruthy()
     })
@@ -160,7 +168,7 @@ describe('useFormValidation', () => {
       const form = makeForm()
       form.service = 'other'
       form.otherService = 'Consulting'
-      const { validateField, errors } = useFormValidation(form)
+      const { validateField, errors } = useFormValidation(form, t)
       validateField('otherService')
       expect(errors.otherService).toBe('')
     })
@@ -169,7 +177,7 @@ describe('useFormValidation', () => {
   describe('terms', () => {
     it('fails when terms are not accepted', () => {
       const form = makeForm()
-      const { validateField, errors } = useFormValidation(form)
+      const { validateField, errors } = useFormValidation(form, t)
       validateField('terms')
       expect(errors.terms).toBeTruthy()
     })
@@ -177,7 +185,7 @@ describe('useFormValidation', () => {
     it('passes when terms are accepted', () => {
       const form = makeForm()
       form.terms = true
-      const { validateField, errors } = useFormValidation(form)
+      const { validateField, errors } = useFormValidation(form, t)
       validateField('terms')
       expect(errors.terms).toBe('')
     })
@@ -186,7 +194,7 @@ describe('useFormValidation', () => {
   describe('validateAll', () => {
     it('returns false when required fields are empty', () => {
       const form = makeForm()
-      const { validateAll } = useFormValidation(form)
+      const { validateAll } = useFormValidation(form, t)
       expect(validateAll()).toBe(false)
     })
 
@@ -197,7 +205,7 @@ describe('useFormValidation', () => {
       form.password = 'password1'
       form.service = 'web-development'
       form.terms = true
-      const { validateAll } = useFormValidation(form)
+      const { validateAll } = useFormValidation(form, t)
       expect(validateAll()).toBe(true)
     })
 
@@ -209,14 +217,14 @@ describe('useFormValidation', () => {
       form.service = 'other'
       form.otherService = ''
       form.terms = true
-      const { validateAll } = useFormValidation(form)
+      const { validateAll } = useFormValidation(form, t)
       expect(validateAll()).toBe(false)
     })
   })
 
   it('populates all errors when validation fails', () => {
     const form = makeForm()
-    const { validateAll, errors } = useFormValidation(form)
+    const { validateAll, errors } = useFormValidation(form, t)
     validateAll()
     expect(errors.name).toBeTruthy()
     expect(errors.email).toBeTruthy()

@@ -5,6 +5,7 @@
       :id="inputId"
       :value="modelValue"
       type="email"
+      :placeholder="placeholder"
       :aria-invalid="!!error"
       :aria-describedby="error ? `${inputId}-error` : undefined"
       @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
@@ -19,6 +20,7 @@ import { useId } from 'vue'
 defineProps<{
   label: string
   modelValue: string
+  placeholder?: string
   error?: string
 }>()
 
