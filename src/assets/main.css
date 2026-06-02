@@ -1,1 +1,7 @@
 @import 'tailwindcss';
+
+@theme {
+  --color-cta-from: #46fdae;
+  --color-cta-to: #c6fb4b;
+  --color-brand: #1a3a3a;
+}

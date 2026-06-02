@@ -1,10 +1,16 @@
 <template>
-  <div>
-    <label :for="inputId">{{ label }}</label>
+  <div class="space-y-1">
+    <label :for="inputId" class="block text-sm font-medium text-gray-700">{{ label }}</label>
     <select
       v-bind="$attrs"
       :id="inputId"
       :value="modelValue"
+      :class="[
+        'w-full border rounded-lg px-3 py-2 text-gray-900 bg-white focus:outline-none focus:ring-2',
+        error
+          ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
+          : 'border-gray-300 focus:ring-brand focus:border-brand',
+      ]"
       :aria-invalid="!!error"
       :aria-describedby="error ? `${inputId}-error` : undefined"
       @change="$emit('update:modelValue', ($event.target as HTMLSelectElement).value)"
@@ -14,7 +20,14 @@
         {{ option.label }}
       </option>
     </select>
-    <span v-if="error" :id="`${inputId}-error`" role="alert" data-testid="error">{{ error }}</span>
+    <span
+      v-if="error"
+      :id="`${inputId}-error`"
+      role="alert"
+      data-testid="error"
+      class="text-sm text-red-600"
+      >{{ error }}</span
+    >
   </div>
 </template>
 

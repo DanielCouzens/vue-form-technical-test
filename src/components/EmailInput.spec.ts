@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import EmailInput from '@/components/EmailInput.vue'
 
 describe('EmailInput', () => {
@@ -38,6 +38,16 @@ describe('EmailInput', () => {
       props: { label: 'Email', modelValue: '', placeholder: 'Enter your email' },
     })
     expect(wrapper.find('input').attributes('placeholder')).toBe('Enter your email')
+  })
+
+  it('forwards blur event to the input via $attrs', async () => {
+    const onBlur = vi.fn<() => void>()
+    const wrapper = mount(EmailInput, {
+      props: { label: 'Email', modelValue: '' },
+      attrs: { onBlur },
+    })
+    await wrapper.find('input').trigger('blur')
+    expect(onBlur).toHaveBeenCalledOnce()
   })
 
   it('does not set aria-describedby when no error', () => {
