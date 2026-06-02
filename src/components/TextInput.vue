@@ -2,6 +2,7 @@
   <div>
     <label :for="inputId">{{ label }}</label>
     <input
+      v-bind="$attrs"
       :id="inputId"
       :value="modelValue"
       type="text"
@@ -15,6 +16,8 @@
 
 <script setup lang="ts">
 import { useId } from 'vue'
+
+defineOptions({ inheritAttrs: false })
 
 defineProps<{
   label: string
