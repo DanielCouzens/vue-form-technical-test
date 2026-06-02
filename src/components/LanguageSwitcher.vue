@@ -1,5 +1,5 @@
 <template>
-  <div class="absolute top-4 right-4 inline-flex gap-1">
+  <div class="absolute top-8 right-8 inline-flex gap-1">
     <button
       v-for="lang in languages"
       :key="lang.code"

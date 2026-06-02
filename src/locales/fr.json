@@ -33,7 +33,7 @@
       "otherServiceRequired": "Veuillez préciser le service",
       "termsRequired": "Vous devez accepter les conditions générales"
     },
-    "title": "Demande de service",
+    "title": "Vue Form Technical Test",
     "submit": "Soumettre",
     "success": "Merci ! Votre demande a été soumise."
   }

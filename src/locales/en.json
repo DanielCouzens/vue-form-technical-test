@@ -33,7 +33,7 @@
       "otherServiceRequired": "Please specify the service",
       "termsRequired": "You must accept the terms and conditions"
     },
-    "title": "Service Enquiry",
+    "title": "Vue Form Technical Test",
     "submit": "Submit",
     "success": "Thank you! Your enquiry has been submitted."
   }
