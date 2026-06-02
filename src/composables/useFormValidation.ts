@@ -49,6 +49,7 @@ export function useFormValidation(form: ServiceFormData, t: (key: string) => str
       formData?: ServiceFormData,
     ) => string
 
+    // otherService validation depends on the selected service, so it receives the full form
     const errorMessage = field === 'otherService' ? validator(value, form) : validator(value)
 
     errors[field] = errorMessage

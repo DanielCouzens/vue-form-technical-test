@@ -51,5 +51,3 @@ defineEmits<{
 
 const inputId = useId()
 </script>
-
-<style scoped></style>

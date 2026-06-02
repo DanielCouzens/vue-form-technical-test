@@ -11,9 +11,18 @@
 </template>
 
 <script setup lang="ts">
+import { watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import LanguageSwitcher from '@/components/LanguageSwitcher.vue'
 import ServiceForm from '@/components/ServiceForm.vue'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
+
+watch(
+  locale,
+  (newLocale) => {
+    document.documentElement.setAttribute('lang', newLocale)
+  },
+  { immediate: true },
+)
 </script>

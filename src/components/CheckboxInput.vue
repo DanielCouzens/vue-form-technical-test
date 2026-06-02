@@ -7,8 +7,6 @@
         type="checkbox"
         class="mt-0.5 accent-brand"
         :checked="modelValue"
-        :required="required || undefined"
-        :aria-required="required || undefined"
         :aria-invalid="!!error"
         :aria-describedby="error ? `${inputId}-error` : undefined"
         @change="$emit('update:modelValue', ($event.target as HTMLInputElement).checked)"
@@ -35,7 +33,6 @@ defineProps<{
   label: string
   modelValue: boolean
   error?: string
-  required?: boolean
 }>()
 
 defineEmits<{
@@ -44,5 +41,3 @@ defineEmits<{
 
 const inputId = useId()
 </script>
-
-<style scoped></style>
