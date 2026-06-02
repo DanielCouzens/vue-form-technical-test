@@ -1,6 +1,6 @@
 <template>
   <div class="space-y-1">
-    <div class="flex items-start gap-2">
+    <div class="flex items-center gap-2">
       <input
         v-bind="$attrs"
         :id="inputId"
