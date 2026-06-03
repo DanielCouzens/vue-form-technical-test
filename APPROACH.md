@@ -233,3 +233,4 @@ await wrapper.findComponent({ name: 'TextInput' }).vm.$emit('update:modelValue',
 - `lucide-vue-next` icons for the password show/hide toggle
 - Cross-browser date picker fallback for older Safari versions
 - Form reset — a "submit another enquiry" path after successful submission
+- A custom date picker component (or a library like v-calendar) would give full control over the locale
