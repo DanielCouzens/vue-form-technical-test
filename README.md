@@ -4,8 +4,8 @@ A dynamic form built with Vue 3, TypeScript, and Tailwind CSS v4. Features clien
 
 ## Prerequisites
 
-- [Node.js](https://nodejs.org/) >= 24.0.0
-- npm >= 11
+- [Node.js](https://nodejs.org/) >= 22.0.0
+- npm >= 10
 
 ## Getting Started
 
