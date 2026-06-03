@@ -1,6 +1,6 @@
 {
   "name": "vue-form-technical-test",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -59,6 +59,6 @@
     "vue-tsc": "^3.2.6"
   },
   "engines": {
-    "node": ">=24.0.0"
+    "node": ">=22.0.0"
   }
 }
