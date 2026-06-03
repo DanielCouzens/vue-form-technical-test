@@ -25,7 +25,7 @@ All components and composables were built using Test-Driven Development — test
 - It ensures every feature has test coverage by definition
 - The failing tests act as a specification, making the intent of each piece of code clear
 
-The project ends with 91 unit and component tests across 8 test files.
+The project has comprehensive unit and component test coverage across all components and the validation composable.
 
 ### Project Management
 
@@ -233,3 +233,4 @@ await wrapper.findComponent({ name: 'TextInput' }).vm.$emit('update:modelValue',
 - `lucide-vue-next` icons for the password show/hide toggle
 - Cross-browser date picker fallback for older Safari versions
 - Form reset — a "submit another enquiry" path after successful submission
+- A custom date picker component (or a library like v-calendar) would give full control over the locale

@@ -94,7 +94,7 @@ src/
 - **Client-side validation** — custom `useFormValidation` composable with per-field blur validation and full form validation on submit
 - **Internationalisation** — all visible strings driven by vue-i18n with three locales (English, French, Italian)
 - **Accessible** — labels linked to inputs, `aria-invalid`, `aria-describedby`, `role="alert"` on errors, full keyboard navigation, WCAG AA contrast
-- **Tested** — 93 unit and component tests covering validation rules, component behaviour, progressive disclosure, and locale switching
+- **Tested** — Comprehensive unit and component tests covering validation rules, component behaviour, progressive disclosure, and locale switching
 
 ## CI
 
